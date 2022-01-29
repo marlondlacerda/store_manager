@@ -9,18 +9,27 @@ const add = async (name, quantity) => {
   return { id: result.insertId, name, quantity };
 };
 
-// const getAll = async () => {
-//   const [rows] = await connection.execute('SELECT * FROM products');
-//   return rows;
-// };
+const getAll = async () => {
+  const [result] = await connection.execute('SELECT * FROM products');
+
+  return result;
+};
+
+const getById = async (id) => {
+  const [result] = await connection.execute('SELECT * FROM products WHERE id = ?', [id]);
+
+  return result;
+};
 
 const getByName = async (name) => {
-  const [rows] = await connection.execute('SELECT * FROM products WHERE name = ?', [name]);
-  return rows;
+  const [result] = await connection.execute('SELECT * FROM products WHERE name = ?', [name]);
+
+  return result;
 };
 
 module.exports = {
-  // getAll,
+  getAll,
   add,
+  getById,
   getByName,
 };

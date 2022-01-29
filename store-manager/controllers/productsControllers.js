@@ -20,13 +20,25 @@ const validateProductSchema = (body) => {
   }
 };
 
-// products.get(
-//   '/',
-//   async (request, response) => {
-//     const productsList = await productsModels.getAll();
-//     response.send(productsList);
-//   },
-// );
+products.get(
+  '/',
+  async (req, res) => {
+    const productsList = await productServices.getAll();
+
+    res.status(200).json(productsList);
+  },
+);
+
+products.get(
+  '/:id',
+  rescue(async (req, res) => {
+    const { id } = req.params;
+
+    const product = await productServices.getById(id);
+
+    res.status(200).json(product);
+  }),
+);
 
 products.post(
   '/',

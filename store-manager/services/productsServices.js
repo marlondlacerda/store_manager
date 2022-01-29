@@ -1,14 +1,8 @@
 const createError = require('../../helpers/createError');
 const productsModel = require('../models/productsModel');
 
-const getByName = async (name) => {
-  const product = await productsModel.getByName(name);
-
-  return product;
-};
-
 const add = async (name, quantity) => {
-  const product = await getByName(name);
+  const product = await productsModel.getByName(name);
 
   if (product.length === 1) {
     throw createError('conflict', 'Product already exists');
@@ -18,7 +12,23 @@ const add = async (name, quantity) => {
   return newProduct;
 };
 
+const getAll = async () => {
+  const products = await productsModel.getAll();
+  return products;
+};
+
+const getById = async (id) => {
+  const product = await productsModel.getById(id);
+
+  if (product.length === 0) {
+    throw createError('notFound', 'Product not found');
+  }
+
+  return product[0];
+};
+
 module.exports = {
   add,
-  getByName,
+  getAll,
+  getById,
 };
