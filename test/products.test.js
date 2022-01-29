@@ -3,7 +3,7 @@ const mysql = require("mysql2/promise");
 const Importer = require("mysql-import");
 require("dotenv").config();
 
-describe("Products", () => {
+describe.only("Products", () => {
   const products = [
     { name: "Martelo de Thor", quantity: 10 },
     { name: "Traje de encolhimento", quantity: 20 },
@@ -53,7 +53,7 @@ describe("Products", () => {
   function hasMessageField(body) {
     expect(Object.keys(body)).toContain("message");
   }
-  
+
   describe("1 - Crie um endpoint para o cadastro de produtos", () => {
     it("Será validado que o campo name esteja presente no body da requisição", async()=>{
       await frisby

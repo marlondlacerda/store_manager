@@ -6,7 +6,7 @@ module.exports = (err, req, res, next) => {
   }
 
   const { details } = err;
-  console.log(details);
+
   const errorMap = {
     'string.min': 422,
     'any.required': 400,

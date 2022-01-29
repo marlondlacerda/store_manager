@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 app.use('/products', productsController);
 
 app.use(middlewares.joiError);
+app.use(middlewares.domainError);
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {

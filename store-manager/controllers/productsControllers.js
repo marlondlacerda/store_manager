@@ -2,7 +2,7 @@ const products = require('express').Router();
 const rescue = require('express-rescue');
 const joi = require('joi');
 
-const productsModels = require('../models/productsModel');
+const productServices = require('../services/productsServices');
 
 const productSchema = joi.object({
   name: joi.string().min(5).required(),
@@ -34,7 +34,9 @@ products.post(
     validateProductSchema(req.body);
     const { name, quantity } = req.body;
 
-    console.log(name, quantity);
+    const product = await productServices.add(name, quantity);
+
+    res.status(201).json(product);
   }),
 );
 
