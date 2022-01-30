@@ -1,4 +1,4 @@
-const sales = require('express').Router();
+const Sales = require('express').Router();
 const rescue = require('express-rescue');
 const joi = require('joi');
 
@@ -22,20 +22,11 @@ const validateSaleSchema = ({ product_id: productId, quantity }) => {
   }
 };
 
-sales.get(
-  '/',
-  rescue(async (req, res) => {
-    res.status(200).json({ message: 'Hello World!' });
-  }),
-);
-
-sales.post(
+Sales.post(
   '/',
   rescue(async (req, res) => {
     const { body } = req;
-    body.forEach((b) => {
-      validateSaleSchema(b);
-    });
+    body.forEach((b) => validateSaleSchema(b));
 
     const sale = await salesService.add(body);
 
@@ -43,4 +34,22 @@ sales.post(
   }),
 );
 
-module.exports = sales;
+Sales.get(
+  '/',
+  rescue(async (req, res) => {
+    const sales = await salesService.getAll();
+
+    res.status(200).json(sales);
+  }),
+);
+
+Sales.get(
+  '/:id',
+  rescue(async (req, res) => {
+    const sales = await salesService.getById(req.params.id);
+
+    res.status(200).json(sales);
+  }),
+);
+
+module.exports = Sales;

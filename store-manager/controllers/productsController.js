@@ -2,7 +2,7 @@ const products = require('express').Router();
 const rescue = require('express-rescue');
 const joi = require('joi');
 
-const productServices = require('../services/productsServices');
+const productServices = require('../services/productsService');
 
 const productSchema = joi.object({
   name: joi.string().min(5).required(),
