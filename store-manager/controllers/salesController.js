@@ -54,4 +54,18 @@ Sales.get(
   }),
 );
 
+Sales.put(
+  '/:id',
+  rescue(async (req, res) => {
+    const { id } = req.params;
+    const { body } = req;
+
+    body.forEach((b) => validateSaleSchema(b));
+
+    const sale = await salesService.update(id, body);
+
+    res.status(200).json(sale);
+  }),
+);
+
 module.exports = Sales;

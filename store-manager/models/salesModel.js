@@ -3,6 +3,7 @@ const connection = require('./connection');
 const queryTypes = {
   addNewSale: 'INSERT INTO sales (date) VALUES (NOW())',
   addNewSP: 'INSERT INTO sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?)',
+  updateSale: 'UPDATE sales_products SET quantity = ? WHERE sale_id = ? AND product_id = ?;',
 
   getAll: `SELECT sp.sale_id AS saleId, date, product_id, quantity FROM
             sales_products AS sp INNER JOIN sales AS s ON s.id = sp.sale_id`,
@@ -44,8 +45,20 @@ const getById = async (id) => {
   return result;
 };
 
+const update = async (id, itemUpdated) => {
+  const test = itemUpdated.map(async ({ product_id: productId, quantity }) => {
+    await connection.execute(
+      queryTypes.updateSale,
+      [quantity, id, productId],
+    );
+  });
+
+  return Promise.all(test).then(() => ({ saleId: +id, itemUpdated }));
+};
+
 module.exports = {
   add,
   getAll,
   getById,
+  update,
 };
