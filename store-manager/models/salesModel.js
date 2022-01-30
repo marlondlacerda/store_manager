@@ -1,4 +1,5 @@
 const connection = require('./connection');
+const productsModel = require('./productsModel');
 
 const queryTypes = {
   addNewSale: 'INSERT INTO sales (date) VALUES (NOW())',
@@ -19,6 +20,8 @@ const add = async (itemsSold) => {
   );
 
   const addNewItem = itemsSold.map(async ({ product_id: productId, quantity }) => {
+    await productsModel.partialUpdate(productId, quantity);
+
     await connection.execute(
       queryTypes.addNewSP,
       [result.insertId, productId, quantity],
@@ -45,14 +48,14 @@ const getById = async (id) => {
 };
 
 const update = async (id, itemUpdated) => {
-  const test = itemUpdated.map(async ({ product_id: productId, quantity }) => {
+  const result = itemUpdated.map(async ({ product_id: productId, quantity }) => {
     await connection.execute(
       queryTypes.updateSale,
       [quantity, id, productId],
     );
   });
 
-  return Promise.all(test).then(() => ({ saleId: +id, itemUpdated }));
+  return Promise.all(result).then(() => ({ saleId: +id, itemUpdated }));
 };
 
 const remove = async (id) => {
@@ -60,12 +63,16 @@ const remove = async (id) => {
 
   if (result.length === 0) return false;
 
+  const removeFunction = result.map(async ({ product_id: productId, quantity }) => {
+    await productsModel.partialUpdate(productId, -quantity);
+  });
+
     await connection.execute(
     queryTypes.remove,
     [id],
   );
 
-  return result;
+  return Promise.all(removeFunction).then(() => (result));
 };
 
 module.exports = {

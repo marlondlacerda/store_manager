@@ -3,6 +3,7 @@ const connection = require('./connection');
 const queryTypes = {
   addNewProduct: 'INSERT INTO products (name, quantity) VALUES (?, ?)',
   update: 'UPDATE products SET name = ?, quantity = ? WHERE id = ?',
+  partialUpdate: 'UPDATE products SET quantity = ? WHERE id = ?',
   remove: 'DELETE FROM products WHERE id = ?',
   getAll: 'SELECT * FROM products',
   getById: 'SELECT * FROM products WHERE id = ?',
@@ -47,6 +48,17 @@ const update = async (id, name, quantity) => {
   return { id, name, quantity };
 };
 
+const partialUpdate = async (id, newQuantity) => {
+  const { quantity } = await getById(id);
+
+  const result = quantity - newQuantity;
+
+  await connection.execute(
+    queryTypes.partialUpdate,
+    [result, id],
+  );
+};
+
 const remove = async (id) => {
   const result = await getById(id);
 
@@ -71,6 +83,7 @@ const getAll = async () => {
 module.exports = {
   add,
   update,
+  partialUpdate,
   remove,
   getAll,
   getById,
