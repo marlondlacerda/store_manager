@@ -6,9 +6,7 @@ module.exports = (err, req, res, next) => {
 
   const status = errorMap[err.code];
 
-  if (!status) {
-    return next(err);
-  }
+  if (!status) return next(err);
 
   res.status(status).json({ message: err.message });
 };

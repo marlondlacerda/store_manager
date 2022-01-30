@@ -1,47 +1,14 @@
-const createError = require('../../helpers/createError');
 const productsModel = require('../models/productsModel');
 
-const add = async (name, quantity) => {
-  const product = await productsModel.getByName(name);
+const add = async (name, quantity) => productsModel.add(name, quantity);
 
-  if (product.length === 1) {
-    throw createError('conflict', 'Product already exists');
-  }
+const getById = async (id) => productsModel.getById(id);
 
-  const newProduct = await productsModel.add(name, quantity);
-  return newProduct;
-};
+const update = async (id, name, quantity) => productsModel.update(id, name, quantity);
 
-const getById = async (id) => {
-  const product = await productsModel.getById(id);
+const remove = async (id) => productsModel.remove(id);
 
-  if (product.length === 0) {
-    throw createError('notFound', 'Product not found');
-  }
-
-  return product[0];
-};
-
-const update = async (id, name, quantity) => {
-  await getById(id);
-
-  await productsModel.update(id, name, quantity);
-
-  return { id, name, quantity };
-};
-
-const remove = async (id) => {
-  const { name, quantity } = await getById(id);
-
-  await productsModel.remove(id);
-
-  return { id, name, quantity };
-};
-
-const getAll = async () => {
-  const products = await productsModel.getAll();
-  return products;
-};
+const getAll = async () => productsModel.getAll();
 
 module.exports = {
   add,

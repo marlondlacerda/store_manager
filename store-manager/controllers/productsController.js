@@ -3,6 +3,7 @@ const rescue = require('express-rescue');
 const joi = require('joi');
 
 const productServices = require('../services/productsService');
+const createError = require('../../helpers/createError');
 
 const productSchema = joi.object({
   name: joi.string().min(5).required(),
@@ -36,6 +37,8 @@ products.get(
 
     const product = await productServices.getById(id);
 
+    if (!product) throw createError('notFound', 'Product not found');
+
     res.status(200).json(product);
   }),
 );
@@ -47,6 +50,8 @@ products.post(
     const { name, quantity } = req.body;
 
     const product = await productServices.add(name, quantity);
+
+    if (!product) throw createError('conflict', 'Product already exists');
 
     res.status(201).json(product);
   }),
@@ -61,6 +66,8 @@ products.put(
 
     const product = await productServices.update(id, name, quantity);
 
+    if (!product) throw createError('notFound', 'Product not found');
+
     res.status(200).json(product);
   }),
 );
@@ -71,6 +78,8 @@ products.delete(
     const { id } = req.params;
 
     const product = await productServices.remove(id);
+
+    if (!product) throw createError('notFound', 'Product not found');
 
     res.status(200).json(product);
   }),

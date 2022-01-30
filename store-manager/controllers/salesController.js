@@ -2,6 +2,7 @@ const Sales = require('express').Router();
 const rescue = require('express-rescue');
 const joi = require('joi');
 
+const createError = require('../../helpers/createError');
 const salesService = require('../services/salesService');
 
 const saleSchema = joi.object({
@@ -17,15 +18,14 @@ const saleSchema = joi.object({
 const validateSaleSchema = ({ product_id: productId, quantity }) => {
   const { error } = saleSchema.validate({ productId, quantity });
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 };
 
 Sales.post(
   '/',
   rescue(async (req, res) => {
     const { body } = req;
+
     body.forEach((b) => validateSaleSchema(b));
 
     const sale = await salesService.add(body);
@@ -47,6 +47,8 @@ Sales.get(
   '/:id',
   rescue(async (req, res) => {
     const sales = await salesService.getById(req.params.id);
+
+    if (!sales) throw createError('notFound', 'Sale not found');
 
     res.status(200).json(sales);
   }),

@@ -1,42 +1,69 @@
 const connection = require('./connection');
 
-const add = async (name, quantity) => {
-  const [result] = await connection.execute(
-    'INSERT INTO products (name, quantity) VALUES (?, ?)',
-    [name, quantity],
-  );
-
-  return { id: result.insertId, name, quantity };
-};
-
-const update = async (id, name, quantity) => {
-  await connection.execute(
-    'UPDATE products SET name = ?, quantity = ? WHERE id = ?',
-    [name, quantity, id],
-  );
-};
-
-const remove = async (id) => {
-  await connection.execute(
-    'DELETE FROM products WHERE id = ?',
-    [id],
-  );
-};
-
-const getAll = async () => {
-  const [result] = await connection.execute('SELECT * FROM products');
-
-  return result;
+const queryTypes = {
+  addNewProduct: 'INSERT INTO products (name, quantity) VALUES (?, ?)',
+  update: 'UPDATE products SET name = ?, quantity = ? WHERE id = ?',
+  remove: 'DELETE FROM products WHERE id = ?',
+  getAll: 'SELECT * FROM products',
+  getById: 'SELECT * FROM products WHERE id = ?',
+  getByName: 'SELECT * FROM products WHERE name = ?',
 };
 
 const getById = async (id) => {
-  const [result] = await connection.execute('SELECT * FROM products WHERE id = ?', [id]);
+  const [result] = await connection.execute(queryTypes.getById, [id]);
+
+  return result[0];
+};
+
+const getByName = async (name) => {
+  const [result] = await connection.execute(queryTypes.getByName, [name]);
 
   return result;
 };
 
-const getByName = async (name) => {
-  const [result] = await connection.execute('SELECT * FROM products WHERE name = ?', [name]);
+const add = async (name, quantity) => {
+  const result = await getByName(name);
+
+  if (result.length === 1) return false;
+
+  const [{ insertId }] = await connection.execute(
+    queryTypes.addNewProduct,
+    [name, quantity],
+  );
+
+  return { id: insertId, name, quantity };
+};
+
+const update = async (id, name, quantity) => {
+  const result = await getById(id);
+
+  if (!result) return false;
+
+  await connection.execute(
+    queryTypes.update,
+    [name, quantity, id],
+  );
+
+  return { id, name, quantity };
+};
+
+const remove = async (id) => {
+  const result = await getById(id);
+
+  if (!result) return false;
+
+  const { name, quantity } = result;
+
+  await connection.execute(
+    queryTypes.remove,
+    [id],
+  );
+
+  return { id, name, quantity };
+};
+
+const getAll = async () => {
+  const [result] = await connection.execute(queryTypes.getAll);
 
   return result;
 };
