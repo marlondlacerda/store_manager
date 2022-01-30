@@ -9,6 +9,20 @@ const add = async (name, quantity) => {
   return { id: result.insertId, name, quantity };
 };
 
+const update = async (id, name, quantity) => {
+  await connection.execute(
+    'UPDATE products SET name = ?, quantity = ? WHERE id = ?',
+    [name, quantity, id],
+  );
+};
+
+const remove = async (id) => {
+  await connection.execute(
+    'DELETE FROM products WHERE id = ?',
+    [id],
+  );
+};
+
 const getAll = async () => {
   const [result] = await connection.execute('SELECT * FROM products');
 
@@ -28,8 +42,10 @@ const getByName = async (name) => {
 };
 
 module.exports = {
-  getAll,
   add,
+  update,
+  remove,
+  getAll,
   getById,
   getByName,
 };

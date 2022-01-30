@@ -52,4 +52,28 @@ products.post(
   }),
 );
 
+products.put(
+  '/:id',
+  rescue(async (req, res) => {
+    validateProductSchema(req.body);
+    const { id } = req.params;
+    const { name, quantity } = req.body;
+
+    const product = await productServices.update(id, name, quantity);
+
+    res.status(200).json(product);
+  }),
+);
+
+products.delete(
+  '/:id',
+  rescue(async (req, res) => {
+    const { id } = req.params;
+
+    const product = await productServices.remove(id);
+
+    res.status(200).json(product);
+  }),
+);
+
 module.exports = products;
