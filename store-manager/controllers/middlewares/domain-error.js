@@ -2,6 +2,7 @@ module.exports = (err, req, res, next) => {
   const errorMap = {
     conflict: 409,
     notFound: 404,
+    unprocessableEntity: 422,
   };
 
   const status = errorMap[err.code];

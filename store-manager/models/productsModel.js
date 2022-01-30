@@ -1,3 +1,4 @@
+const createError = require('../../helpers/createError');
 const connection = require('./connection');
 
 const queryTypes = {
@@ -53,10 +54,14 @@ const partialUpdate = async (id, newQuantity) => {
 
   const result = quantity - newQuantity;
 
+  if (result < 0) throw createError('unprocessableEntity', 'Such amount is not permitted to sell');
+
   await connection.execute(
     queryTypes.partialUpdate,
     [result, id],
   );
+
+  return true;
 };
 
 const remove = async (id) => {
