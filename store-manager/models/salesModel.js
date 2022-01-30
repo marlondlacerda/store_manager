@@ -4,6 +4,7 @@ const queryTypes = {
   addNewSale: 'INSERT INTO sales (date) VALUES (NOW())',
   addNewSP: 'INSERT INTO sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?)',
   updateSale: 'UPDATE sales_products SET quantity = ? WHERE sale_id = ? AND product_id = ?;',
+  remove: 'DELETE FROM sales_products WHERE sale_id = ?',
 
   getAll: `SELECT sp.sale_id AS saleId, date, product_id, quantity FROM
             sales_products AS sp INNER JOIN sales AS s ON s.id = sp.sale_id`,
@@ -40,8 +41,6 @@ const getById = async (id) => {
     queryTypes.getById, [id],
   );
 
-  if (result.length === 0) return null;
-
   return result;
 };
 
@@ -56,9 +55,23 @@ const update = async (id, itemUpdated) => {
   return Promise.all(test).then(() => ({ saleId: +id, itemUpdated }));
 };
 
+const remove = async (id) => {
+  const result = await getById(id);
+
+  if (result.length === 0) return false;
+
+    await connection.execute(
+    queryTypes.remove,
+    [id],
+  );
+
+  return result;
+};
+
 module.exports = {
   add,
   getAll,
   getById,
   update,
+  remove,
 };

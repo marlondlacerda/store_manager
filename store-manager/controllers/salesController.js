@@ -48,7 +48,7 @@ Sales.get(
   rescue(async (req, res) => {
     const sales = await salesService.getById(req.params.id);
 
-    if (!sales) throw createError('notFound', 'Sale not found');
+    if (sales.length === 0) throw createError('notFound', 'Sale not found');
 
     res.status(200).json(sales);
   }),
@@ -63,6 +63,19 @@ Sales.put(
     body.forEach((b) => validateSaleSchema(b));
 
     const sale = await salesService.update(id, body);
+
+    res.status(200).json(sale);
+  }),
+);
+
+Sales.delete(
+  '/:id',
+  rescue(async (req, res) => {
+    const { id } = req.params;
+
+    const sale = await salesService.remove(id);
+
+    if (!sale) throw createError('notFound', 'Sale not found');
 
     res.status(200).json(sale);
   }),
