@@ -2,9 +2,9 @@ const bodyParser = require('body-parser');
 const express = require('express');
 require('dotenv').config();
 
-const middlewares = require('./store-manager/controllers/middlewares');
-const productsController = require('./store-manager/controllers/productsController');
-const salesController = require('./store-manager/controllers/salesController');
+const middlewares = require('./controllers/middlewares');
+const { products } = require('./controllers/productsController');
+const { sales } = require('./controllers/salesController');
 
 const app = express();
 
@@ -15,8 +15,8 @@ app.get('/', (_request, response) => {
   response.send();
 });
 
-app.use('/products', productsController);
-app.use('/sales', salesController);
+app.use('/products', products);
+app.use('/sales', sales);
 
 app.use(middlewares.joiError);
 app.use(middlewares.domainError);

@@ -1,4 +1,4 @@
-const createError = require('../../helpers/createError');
+const createError = require('../helpers/createError');
 const connection = require('./connection');
 
 const queryTypes = {
